@@ -16,12 +16,41 @@ def add_genes(protein_db):
 			lines = [l.strip().split('\t') for l in f.readlines()]
 			header = lines[0]
 			lines = lines[1 : ]
+		rows = {} 
+		all_attributes = set([])
 		for l in lines:
 			p = {}
 			for i, att_val in enumerate(l):
 				att = header[i]
 				p[att] = att_val
-			table.insert(p)	
+				all_attributes.add(att)
+			gene_id = p['GENE_OID']
+			rows[gene_id] = p
+		other_dirs = ['gene_cog_groups',\
+			'gene_ko_enzymes',\
+			'gene_ko_terms',\
+			'gene_kog_groups',\
+			'gene_pfam_families',\
+			'gene_tigrfams']
+		for d in other_dirs:
+			with open('../' + d + '/' + x, 'r') as f:
+				lines = [l.strip().split('\t') for l in f.readlines()]
+				header = lines[0]
+				lines = lines[1 : ]
+			for l in lines:
+				p_temp = {}
+				for i, att_val in enumerate(l):
+					att = header[i]
+					all_attributes.add(att)
+					p_temp[att] = att_val
+				gene_id = p_temp['GENE_OID']
+				for att in p_temp:
+					att_val = p_temp[att]
+					rows[gene_id][att] = att_val
+					all_attributes.add(att)
+		rows = list(rows.values())
+		for r in rows:
+			table.insert(r)
 def generic_add(db, gene_dir):
 	print('Working on directory ' + gene_dir)
 	sys.stdout.flush()

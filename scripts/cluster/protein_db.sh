@@ -4,7 +4,7 @@
 #SBATCH --output=protein_db.log
 #SBATCH --error=protein_db.log
 #SBATCH --mem-per-cpu=16G
-#SBATCH --mail-type=FAIL,DONE
+#SBATCH --mail-type=FAIL,END
 
 source activate virus_db
 cd ..
