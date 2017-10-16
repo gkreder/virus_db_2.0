@@ -1,0 +1,36 @@
+* Conda Env
+	virus_db
+* Requirements
+	dataset
+* Pipeline
+	nr_db.py
+		-args: None
+		-input: ../data/nr/nr.fasta
+		-output: ../data/nr/nr.sqlite
+    -notes: 1 time,  
+	taxon_db.py
+		-args: None
+		-input: ../data/isolate_viruses/taxon.tsv
+		-output: ../data/db/taxon_db.sqlite
+		-notes: 1 time, ~5 minute runtime
+	protein_db.py
+		-args: None
+		-input: 
+			../data/isolate_viruses/gene
+			../data/isolate_viruses/gene_cog_groups
+			../data/isolate_viruses/gene_ko_enzymes
+			../data/isolate_viruses/gene_ko_terms
+			../data/isolate_viruses/gene_kog_groups
+			../data/isolate_viruses/gene_pfam_families
+			../data/isolate_viruses/gene_tigrfams
+		-output: ../data/db/protein_db.sqlite
+		-notes: 1 time
+				Have a bunch of functions in the aux script
+				...don't know if it's the best way...
+				aux/isolate_viruses.py
+					-args: None
+					-input: ../data/isolate_viruses/gene
+					-output: ../data/db/protein_db.sqlite
+					-notes: each func is 1 time, should take ~5 mins each
+
+	
