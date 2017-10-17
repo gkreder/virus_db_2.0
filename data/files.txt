@@ -1,0 +1,23 @@
+################################################################################
+* nr
+	-The ncbi nr database and associated files
+	---nr----
+		Original nr db downloaded from ncbi and unpacked
+	---viral_proteins.txt---
+		List of accession numbers for Viral proteins in ncbi protein database
+################################################################################
+* isolate_viruses
+	-The data dump from Stephen's jgi data pull. Seven directories all with
+	.tsv files that contain protein info for the relevant gene/protein
+	information the specified directory and associated taxons (taxon list
+	in taxon.tsv)
+################################################################################
+* stephen_backup
+	-Just a backup of the data that Stephen originally sent from jgi
+################################################################################
+* db
+	-created databases
+	---protein_db.sqlite---
+		Aggregated db of all the protein info that Stephen sent over
+	---taxon_db.sqlite---
+		Aggregated db of all the taxon info that Stephen sent over

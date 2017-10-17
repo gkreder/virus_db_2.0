@@ -1,36 +1,64 @@
+################################################################################
 * Conda Env
 	virus_db
+################################################################################
 * Requirements
 	dataset
-* Pipeline
-	nr_db.py
-		-args: None
-		-input: ../data/nr/nr.fasta
-		-output: ../data/nr/nr.sqlite
-    -notes: 1 time,  
-	taxon_db.py
+	Biopy--thon
+################################################################################
+* Pipeline (DB creation)
+	---cluster/nr_db.sh---
+		---nr_db.py---
+			-args: None
+			-input: ../data/nr/nr.fasta
+			-output: ../data/nr/nr.sqlite
+	    -notes: 1 time,  
+    ---cluster/nr_viral_batch.sh---
+	    ---cluster/nr_viral.sh---
+		    ---nr_viral.py---
+		    	-args: start, end
+		    	-input: ../data/nr/nr.sqlite
+		    	-output: ../data/nr/nr_viral.sqlite
+		    	-notes: 1 time, massive run time because I'm going into the nr.sqlite
+		    			database and checking one by one if each protein in there
+		    			is viral. If is, I write it to the nr_viral.sqlite db. 
+		    			Tried to parallelize as much as I could with array jobs
+	---taxon_db.py---
 		-args: None
 		-input: ../data/isolate_viruses/taxon.tsv
 		-output: ../data/db/taxon_db.sqlite
 		-notes: 1 time, ~5 minute runtime
-	protein_db.py
-		-args: None
-		-input: 
-			../data/isolate_viruses/gene
-			../data/isolate_viruses/gene_cog_groups
-			../data/isolate_viruses/gene_ko_enzymes
-			../data/isolate_viruses/gene_ko_terms
-			../data/isolate_viruses/gene_kog_groups
-			../data/isolate_viruses/gene_pfam_families
-			../data/isolate_viruses/gene_tigrfams
-		-output: ../data/db/protein_db.sqlite
-		-notes: 1 time
-				Have a bunch of functions in the aux script
-				...don't know if it's the best way...
-				aux/isolate_viruses.py
-					-args: None
-					-input: ../data/isolate_viruses/gene
-					-output: ../data/db/protein_db.sqlite
-					-notes: each func is 1 time, should take ~5 mins each
-
-	
+	---cluster/protein_db.sh---
+		---protein_db.py---
+			-args: None
+			-input: 
+				../data/isolate_viruses/gene
+				../data/isolate_viruses/gene_cog_groups
+				../data/isolate_viruses/gene_ko_enzymes
+				../data/isolate_viruses/gene_ko_terms
+				../data/isolate_viruses/gene_kog_groups
+				../data/isolate_viruses/gene_pfam_families
+				../data/isolate_viruses/gene_tigrfams
+			-output: ../data/db/protein_db.sqlite
+			-notes: 1 time, roughly 2 hours to run
+					---aux/isolate_viruses.py---
+						-args: None
+						-input: ../data/isolate_viruses/gene
+						-output: ../data/db/protein_db.sqlite	
+################################################################################
+* Pipeline (Analysis)
+	---analyze_db.py---
+		---aux/analysis_aux.py---
+			-count_proteins-
+				-args: None
+				-input: ../data/db/protein_db.sqlite
+				-output: Protein count
+			-annotation_density-
+				-args: None
+				-input: ../data/db/protein_db.sqlite
+				-output: Counts for annotations
+			-create_viral_sqlite-
+				-args: None
+				-input: ../data/nr/viral_proteins.txt
+				-output: ../data/nr/viral_proteins.sqlite
+				-notes: 1 time, about 5 minutes

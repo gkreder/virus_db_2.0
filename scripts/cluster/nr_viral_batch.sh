@@ -1,0 +1,1 @@
+sbatch --array=0-998:1 nr_viral.sh
